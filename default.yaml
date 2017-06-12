@@ -3,14 +3,14 @@ params:
     - X2: [-2.048, 2.048, 0.001]
 
 population_capacity:
-    40
+    50
 
 epochs:
-    200
+    100
 
 pc:
-    0.6
+    0.9
     
 px:
-    0.001
+    0.01
     

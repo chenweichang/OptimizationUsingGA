@@ -113,7 +113,7 @@ class Population(object):
                 individual.object_fitness = 0.0
 
 
-class GeneticAlgorithm(object):
+class ParallelGeneticAlgorithm(object):
     '''
     遗传算法类
     '''
@@ -453,6 +453,6 @@ class GeneticAlgorithm(object):
         print(f"[+] epoch - {x} : current best value is \033[1;31;40m{y}\033[0m ...")
 
 if __name__ == '__main__':
-    ga = GeneticAlgorithm()
+    ga = ParallelGeneticAlgorithm()
     ga.run()
     
