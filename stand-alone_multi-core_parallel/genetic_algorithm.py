@@ -108,13 +108,14 @@ class Population(object):
 
             # ***** core compute *****
             f = np.arange(2, 18.1, 0.1) * 1e9
+            f.dtype = np.complex
             w = 2 * np.pi * f
-            Z1 = 
-            Z2 =
+            Z1 = 1 / (-1/(w * x[0]) - 1/(w * x[1]) - 1/(w * x[2]))
+            Z2 = 1 / ()
             Z3 =
             Z4 = 
             Z_1_2_3_4 = Z1 + Z2 + Z3 + Z4
-            Z5 = np.complex(0, -1 / (w * x[7]))
+            Z5 = -1 / (w * x[7])
             Z = (Z_1_2_3_4 * Z5) / (Z_1_2_3_4 + Z5)
             S11_s = 20 * np.log10(np.abs(Z / (2 * np.sqrt(50) + Z)))
             individual.object_value = np.sqrt(self.S11_m - S11_s)
@@ -125,7 +126,7 @@ class Population(object):
         个体适应度值计算
         '''
         for individual in self.individuals:
-            
+            pass
 
 
 class ParallelGeneticAlgorithm(object):
