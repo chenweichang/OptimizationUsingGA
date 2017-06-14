@@ -2,6 +2,7 @@
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+import platform
 import random
 import yaml
 
@@ -450,7 +451,10 @@ class GeneticAlgorithm(object):
         pass
     
     def make_visualization(self, x, y):
-        print(f"[+] epoch - {x} : current best value is \033[1;31;40m{y}\033[0m ...")
+        if platform.system() == 'Windows':
+            print(f"[+] epoch - {x} : current best value is {y} ...")
+        else:
+            print(f"[+] epoch - {x} : current best value is \033[1;31;40m{y}\033[0m ...")
 
 if __name__ == '__main__':
     ga = GeneticAlgorithm()

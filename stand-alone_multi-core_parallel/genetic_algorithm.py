@@ -179,10 +179,12 @@ class ParallelGeneticAlgorithm(object):
                 self.estimate(i)
             self.preserve_the_best()
             for i in range(CORE):
-                self.generate_next_population(i)
+                self.generate_next_population(i, self.best_individual.object_fitness)
 
-            self.make_visualization(self.e + 1, self.best_individual.object_value)
+            self.make_visualization(self.e + 1)
             self.e += 1
+        
+        self.output()
     
     def estimate(self, index):
         '''
@@ -468,43 +470,33 @@ class ParallelGeneticAlgorithm(object):
     def adapt_operator_probabilities(self):
         pass
     
-    def make_visualization(self, x):
-        # ***** core decode *****
-        start = 0
-        end = 0
+    def make_visualization(self, epoch, value):
+        print(f"[+] epoch - {epoch} : current best value is {value} ...")
 
+    def output(self):
         x = []
         for param in self.params:
             end += param[2]
 
-            partial_chromosome = individual.chromosome[start : end]
+            partial_chromosome = self.best_individual.chromosome[start : end]
             value = 0
             for i in range(len(partial_chromosome), 0, -1):
                 shift = len(partial_chromosome) - i
                 t = 1
                 t <<= shift
-                value += individual.chromosome[i - 1] * t
+                value += self.best_individual.chromosome[i - 1] * t
             value = (param[1] - param[0]) * (value / math.pow(2, param[2])) + param[0]
             x.append(value)
 
             start += param[2]
-        # ***** core decode *****
-
-        # ***** core compute *****
-        f = np.arange(2, 18.1, 0.1) * 1e9, w = 2 * np.pi * f
-        Cj = np.complex(0, -1/(w * x[0])), Cd = np.complex(0, -1/(w * x[1])), Ci = np.complex(0, -1/(w * x[2])), Rj = np.complex(x[3], 0)
-        Ri = np.complex(x[4], 0) , Rs = np.complex(x[5], 0), Ls = np.complex(0, w * x[6]), Cp = np.complex(0, -1/(w * x[7]))
-        Z1 = 1(1/Cj + 1/Rj + 1/Cd)
-        Z2 = (Ri * Ci) / (Ri + Ci)
-        Z3 = Rs
-        Z4 = Ls
-        Z_1_2_3_4 = Z1 + Z2 + Z3 + Z4
-        Z5 = Cp
-        Z = (Z_1_2_3_4 * Z5) / (Z_1_2_3_4 + Z5)
-        S11_s = 20 * np.log10(np.abs(Z / (2 * np.sqrt(50) + Z)))
-        individual.object_value = np.sqrt(self.S11_m - S11_s) * self.S11_m_weight
-        # ***** core compute *****
-        print(f"[+] epoch - {x} : current best value is \033[1;31;40m{y}\033[0m ...")
+        print('')
+        print('')
+        print('')
+        print('')
+        print('')
+        print('')
+        print('')
+        print('')
 
 if __name__ == '__main__':
     ga = ParallelGeneticAlgorithm()
