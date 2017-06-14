@@ -44,6 +44,12 @@ class Population(object):
         book = xlrd.open_workbook('fittingtarget.xls')
         sheet = book.sheet_by_index(0)
         self.S11_m = np.array(sheet.col_value(1))
+        self.S11_m_weight = np.empty_like(self.S11_m)
+        _top = np.max(self.S11_m)
+        _S11_m = np.abs(self.S11_m - _top)
+        _sum = np.sum(_S11_m) 
+        for i in range(self.S11_m_weight.shape[0]):
+            self.S11_m_weight[i] = _S11_m[i] / _sum
 
     def read_parameters(self, configuration_file='parameters.yaml'):
         '''
@@ -87,13 +93,14 @@ class Population(object):
         个体目标值计算
         '''
         for individual in self.individuals:
+            # ***** core decode *****
             start = 0
             end = 0
 
             x = []
             for param in self.params:
                 end += param[2]
-                # ***** core compute *****
+
                 partial_chromosome = individual.chromosome[start : end]
                 value = 0
                 for i in range(len(partial_chromosome), 0, -1):
@@ -103,22 +110,23 @@ class Population(object):
                     value += individual.chromosome[i - 1] * t
                 value = (param[1] - param[0]) * (value / math.pow(2, param[2])) + param[0]
                 x.append(value)
-                # ***** core compute *****
+
                 start += param[2]
+            # ***** core decode *****
 
             # ***** core compute *****
-            f = np.arange(2, 18.1, 0.1) * 1e9
-            f.dtype = np.complex
-            w = 2 * np.pi * f
-            Z1 = 1 / (-1/(w * x[0]) - 1/(w * x[1]) - 1/(w * x[2]))
-            Z2 = 1 / ()
-            Z3 =
-            Z4 = 
+            f = np.arange(2, 18.1, 0.1) * 1e9, w = 2 * np.pi * f
+            Cj = np.complex(0, -1/(w * x[0])), Cd = np.complex(0, -1/(w * x[1])), Ci = np.complex(0, -1/(w * x[2])), Rj = np.complex(x[3], 0)
+            Ri = np.complex(x[4], 0) , Rs = np.complex(x[5], 0), Ls = np.complex(0, w * x[6]), Cp = np.complex(0, -1/(w * x[7]))
+            Z1 = 1(1/Cj + 1/Rj + 1/Cd)
+            Z2 = (Ri * Ci) / (Ri + Ci)
+            Z3 = Rs
+            Z4 = Ls
             Z_1_2_3_4 = Z1 + Z2 + Z3 + Z4
-            Z5 = -1 / (w * x[7])
+            Z5 = Cp
             Z = (Z_1_2_3_4 * Z5) / (Z_1_2_3_4 + Z5)
             S11_s = 20 * np.log10(np.abs(Z / (2 * np.sqrt(50) + Z)))
-            individual.object_value = np.sqrt(self.S11_m - S11_s)
+            individual.object_value = np.sqrt(self.S11_m - S11_s) * self.S11_m_weight
             # ***** core compute *****
 
     def evaluate_object_fitness(self):
@@ -126,8 +134,7 @@ class Population(object):
         个体适应度值计算
         '''
         for individual in self.individuals:
-            pass
-
+            individual.object_fitness = individual.object_value
 
 class ParallelGeneticAlgorithm(object):
     '''
@@ -461,7 +468,42 @@ class ParallelGeneticAlgorithm(object):
     def adapt_operator_probabilities(self):
         pass
     
-    def make_visualization(self, x, y):
+    def make_visualization(self, x):
+        # ***** core decode *****
+        start = 0
+        end = 0
+
+        x = []
+        for param in self.params:
+            end += param[2]
+
+            partial_chromosome = individual.chromosome[start : end]
+            value = 0
+            for i in range(len(partial_chromosome), 0, -1):
+                shift = len(partial_chromosome) - i
+                t = 1
+                t <<= shift
+                value += individual.chromosome[i - 1] * t
+            value = (param[1] - param[0]) * (value / math.pow(2, param[2])) + param[0]
+            x.append(value)
+
+            start += param[2]
+        # ***** core decode *****
+
+        # ***** core compute *****
+        f = np.arange(2, 18.1, 0.1) * 1e9, w = 2 * np.pi * f
+        Cj = np.complex(0, -1/(w * x[0])), Cd = np.complex(0, -1/(w * x[1])), Ci = np.complex(0, -1/(w * x[2])), Rj = np.complex(x[3], 0)
+        Ri = np.complex(x[4], 0) , Rs = np.complex(x[5], 0), Ls = np.complex(0, w * x[6]), Cp = np.complex(0, -1/(w * x[7]))
+        Z1 = 1(1/Cj + 1/Rj + 1/Cd)
+        Z2 = (Ri * Ci) / (Ri + Ci)
+        Z3 = Rs
+        Z4 = Ls
+        Z_1_2_3_4 = Z1 + Z2 + Z3 + Z4
+        Z5 = Cp
+        Z = (Z_1_2_3_4 * Z5) / (Z_1_2_3_4 + Z5)
+        S11_s = 20 * np.log10(np.abs(Z / (2 * np.sqrt(50) + Z)))
+        individual.object_value = np.sqrt(self.S11_m - S11_s) * self.S11_m_weight
+        # ***** core compute *****
         print(f"[+] epoch - {x} : current best value is \033[1;31;40m{y}\033[0m ...")
 
 if __name__ == '__main__':
