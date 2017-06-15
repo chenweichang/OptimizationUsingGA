@@ -115,14 +115,22 @@ class Population(object):
             # ***** core decode *****
 
             # ***** core compute *****
-            f = np.arange(2, 18.1, 0.1) * 1e9, w = 2 * np.pi * f
-            Cj = np.complex(0, -1/(w * x[0])), Cd = np.complex(0, -1/(w * x[1])), Ci = np.complex(0, -1/(w * x[2])), Rj = np.complex(x[3], 0)
-            Ri = np.complex(x[4], 0) , Rs = np.complex(x[5], 0), Ls = np.complex(0, w * x[6]), Cp = np.complex(0, -1/(w * x[7]))
-            Z1 = 1(1/Cj + 1/Rj + 1/Cd)
-            Z2 = (Ri * Ci) / (Ri + Ci)
+            f = np.arange(2, 18.1, 0.1) * 1e9
+            w = 2 * np.pi * f
+            # Cj = np.complex(0, -1/(w * x[0])) * 1e-12 
+            # Cd = np.complex(0, -1/(w * x[1])) * 1e-12 
+            # Ci = np.complex(0, -1/(w * x[2])) * 1e-12 
+            # Rj = np.complex(x[3], 0)
+            # Ri = np.complex(x[4], 0)
+            Rs = np.complex(x[5], 0)
+            Ls = np.complex(0, w * x[6]) * 1e-9
+            Cp = np.complex(0, -1/(w * x[7])) * 1e-12 
+            # Z1 = 1(1/Cj + 1/Rj + 1/Cd)
+            # Z2 = (Ri * Ci) / (Ri + Ci)
             Z3 = Rs
             Z4 = Ls
-            Z_1_2_3_4 = Z1 + Z2 + Z3 + Z4
+            # Z_1_2_3_4 = Z1 + Z2 + Z3 + Z4
+            Z_1_2_3_4 = Z3 + Z4
             Z5 = Cp
             Z = (Z_1_2_3_4 * Z5) / (Z_1_2_3_4 + Z5)
             S11_s = 20 * np.log10(np.abs(Z / (2 * np.sqrt(50) + Z)))
@@ -134,7 +142,7 @@ class Population(object):
         个体适应度值计算
         '''
         for individual in self.individuals:
-            individual.object_fitness = individual.object_value
+            individual.object_fitness = -1 * individual.object_value
 
 class ParallelGeneticAlgorithm(object):
     '''
@@ -489,14 +497,45 @@ class ParallelGeneticAlgorithm(object):
             x.append(value)
 
             start += param[2]
-        print('')
-        print('')
-        print('')
-        print('')
-        print('')
-        print('')
-        print('')
-        print('')
+        
+        f = np.arange(2, 18.1, 0.1) * 1e9
+        w = 2 * np.pi * f
+        # Cj = np.complex(0, -1/(w * x[0])) * 1e-12 
+        # Cd = np.complex(0, -1/(w * x[1])) * 1e-12 
+        # Ci = np.complex(0, -1/(w * x[2])) * 1e-12 
+        # Rj = np.complex(x[3], 0)
+        # Ri = np.complex(x[4], 0)
+        Rs = np.complex(x[5], 0)
+        Ls = np.complex(0, w * x[6]) * 1e-9
+        Cp = np.complex(0, -1/(w * x[7])) * 1e-12
+        # print(f'Cj : {} pF')
+        # print(f'Cd : {} pF')
+        # print(f'Ci : {} pF')
+        # print(f'Rj : {} ohm')
+        # print(f'Ri : {} ohm')
+        print(f'Rs : {Rs} ohm')
+        print(f'Ls : {Ls} nH')
+        print(f'Cp : {Cp} pF')
+
+        # Z1 = 1(1/Cj + 1/Rj + 1/Cd)
+        # Z2 = (Ri * Ci) / (Ri + Ci)
+        Z3 = Rs
+        Z4 = Ls
+        # Z_1_2_3_4 = Z1 + Z2 + Z3 + Z4
+        Z_1_2_3_4 = Z3 + Z4
+        Z5 = Cp
+        Z = (Z_1_2_3_4 * Z5) / (Z_1_2_3_4 + Z5)
+        S11_s = 20 * np.log10(np.abs(Z / (2 * np.sqrt(50) + Z)))
+
+        freq = np.arange(2, 18.1, 0.1)
+        plt.plot(freq, self.S11_m, 'k-', label='Measuring Data')
+        plt.plot(freq, S11_s, 'r-', label='Fitting Data')
+        plt.xlabel('Freq(GHz)')
+        plt.xlabel('S11(dB)')
+        plt.xlim(2.0, 18.0)
+        plt.ylim(-20.0, 10.0)
+        plt.legend()
+        plt.show()
 
 if __name__ == '__main__':
     ga = ParallelGeneticAlgorithm()
